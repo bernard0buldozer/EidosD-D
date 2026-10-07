@@ -1,5 +1,6 @@
 import type { CharacterSession, Roll } from "../domain/types";
 import { warrior } from "../data/warrior";
+import { defaultCore, decodeCore, validRoll } from "./core";
 import {
   initialWarriorState,
   type WarriorState,
@@ -14,13 +15,7 @@ export interface SheetState {
 export const STORAGE_KEY = `eidos:sheet:${warrior.id}:v1`;
 export function initialSheetState(): SheetState {
   return {
-    core: {
-      hp: warrior.maxHp,
-      name: "Воин",
-      wallet: "",
-      notes: "",
-      portrait: null,
-    },
+    core: defaultCore(warrior),
     mechanic: initialWarriorState(),
     history: [],
     lastRoll: null,
@@ -28,31 +23,7 @@ export function initialSheetState(): SheetState {
 }
 const object = (v: unknown): v is Record<string, unknown> =>
   !!v && typeof v === "object" && !Array.isArray(v);
-function validRoll(v: unknown): v is Roll {
-  if (!object(v)) return false;
-  return (
-    typeof v.id === "string" &&
-    typeof v.label === "string" &&
-    ["attribute", "attack", "damage", "parry", "manual"].includes(
-      String(v.kind),
-    ) &&
-    (v.sides === null || [4, 8, 20].includes(v.sides as number)) &&
-    Array.isArray(v.values) &&
-    v.values.length <= 2 &&
-    v.values.every(
-      (n) =>
-        Number.isInteger(n) && Number(n) >= 1 && Number(n) <= Number(v.sides),
-    ) &&
-    Number.isInteger(v.selectedIndex) &&
-    Number(v.selectedIndex) >= 0 &&
-    Number(v.selectedIndex) < Math.max(v.values.length, 1) &&
-    (v.modifier === null || Number.isFinite(v.modifier)) &&
-    (v.total === null || Number.isFinite(v.total)) &&
-    typeof v.critical === "boolean" &&
-    Number.isFinite(v.timestamp)
-  );
-}
-function validMechanic(v: unknown): v is WarriorState {
+export function validMechanic(v: unknown): v is WarriorState {
   if (!object(v) || !object(v.spent)) return false;
   const basic =
     ["combat", "preparation"].includes(String(v.phase)) &&
@@ -92,25 +63,7 @@ export function decodeState(raw: string | null): SheetState {
     if (!object(saved) || saved.version !== 1 || !object(saved.state))
       return defaults;
     const s = saved.state;
-    if (object(s.core)) {
-      if (typeof s.core.hp === "number" && Number.isFinite(s.core.hp))
-        defaults.core.hp = Math.max(
-          0,
-          Math.min(warrior.maxHp, Math.trunc(s.core.hp)),
-        );
-      for (const key of ["name", "wallet", "notes"] as const)
-        if (typeof s.core[key] === "string")
-          defaults.core[key] = s.core[key].slice(
-            0,
-            key === "notes" ? 4000 : 100,
-          );
-      if (
-        typeof s.core.portrait === "string" &&
-        /^data:image\/(png|jpeg|webp);base64,/.test(s.core.portrait) &&
-        s.core.portrait.length < 1500000
-      )
-        defaults.core.portrait = s.core.portrait;
-    }
+    defaults.core = decodeCore(s.core, warrior);
     if (validMechanic(s.mechanic)) defaults.mechanic = s.mechanic;
     if (Array.isArray(s.history))
       defaults.history = s.history.filter(validRoll).slice(0, 10);

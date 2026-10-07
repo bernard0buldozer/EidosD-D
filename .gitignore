@@ -2,3 +2,5 @@ node_modules/
 dist/
 artifacts/
 *.local
+public/dice-assets/
+public/assets/

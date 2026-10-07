@@ -21,24 +21,70 @@ export interface ResourceDefinition {
 /** Shared character data deliberately contains no Warrior-specific mechanics. */
 export interface CharacterDefinition {
   id: string;
+  name: string;
+  skills?: Skill[];
   className: string;
-  level: number;
+  level: number | null;
   archetype: string;
-  maxHp: number;
-  speed: { value: number; unit: string };
+  maxHp: number | null;
+  speed: { value: number | null; unit: string };
   attributes: Attribute[];
   resources: ResourceDefinition[];
   mechanicId: string;
 }
 export interface CharacterSession {
-  hp: number;
+  hp: number | null;
+  maxHp: number | null;
+  level: number | null;
+  defense: number | null;
+  speed: number | null;
+  attributes: Attribute[];
   name: string;
   wallet: string;
   notes: string;
   portrait: string | null;
+  items: InventoryItem[];
+  journal: JournalEntry[];
+  skills: Skill[];
+  proficiencies: string;
 }
-export type DieSides = 4 | 8 | 20;
-export type RollKind = "attribute" | "attack" | "damage" | "parry" | "manual";
+export interface InventoryItem {
+  id: string;
+  name: string;
+  quantity: number;
+  description: string;
+  notes: string;
+  category: string;
+  equipped: boolean;
+}
+export interface JournalEntry {
+  id: string;
+  category: string;
+  name: string;
+  description: string;
+  notes: string;
+  status: string;
+  met: string;
+  timestamp: number;
+}
+export interface Skill {
+  id: string;
+  name: string;
+  bonus: number;
+}
+export type DieSides = 4 | 6 | 8 | 10 | 12 | 20;
+export type RollKind =
+  | "attribute"
+  | "attack"
+  | "damage"
+  | "parry"
+  | "manual"
+  | "free"
+  | "skill";
+export interface DicePool {
+  sides: DieSides;
+  quantity: number;
+}
 export interface Roll {
   id: string;
   label: string;
@@ -50,4 +96,7 @@ export interface Roll {
   total: number | null;
   critical: boolean;
   timestamp: number;
+  pool?: DicePool[];
+  dice?: { sides: DieSides; value: number }[];
+  disadvantage?: boolean;
 }

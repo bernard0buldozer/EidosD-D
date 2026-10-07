@@ -9,7 +9,7 @@ import {
   X,
 } from "../../components/Icons";
 import { SectionTitle } from "../../components/SectionTitle";
-import { rollSummary } from "../../domain/dice";
+import { rollSummary, signed } from "../../domain/dice";
 import type { SheetController } from "../../state/useSheet";
 import { stances } from "./config";
 import { canAttack, type PendingAttack } from "./rules";
@@ -54,10 +54,11 @@ export function AttackPanel({ game }: { game: SheetController }) {
             </button>
           </div>
           <strong role="cell">
-            +2<span className="cell-note">СИЛ</span>
+            {signed(game.strength)}
+            <span className="cell-note">СИЛ</span>
           </strong>
           <span role="cell" className="damage-formula">
-            1d{stance.damageDie} + 2
+            1d{stance.damageDie} {signed(game.strength)}
           </span>
           <span role="cell" title="Тип урона не задан">
             —
@@ -79,7 +80,7 @@ export function AttackPanel({ game }: { game: SheetController }) {
               </button>
             </div>
             <span role="cell">—</span>
-            <span role="cell">1d8 + 2</span>
+            <span role="cell">1d8 {signed(game.strength)}</span>
             <span role="cell">—</span>
           </div>
         )}
@@ -147,10 +148,10 @@ export function AttackPanel({ game }: { game: SheetController }) {
       <details className="rules-note">
         <summary>Как считается атака</summary>
         <p>
-          d20 + СИЛ (+2). Дополнительный бонус атаки и владение не заданы,
-          поэтому не добавляются. Тип урона и общие правила критического
-          попадания пока не определены. Попадание подтверждает игрок по решению
-          мастера.
+          d20 + текущий модификатор СИЛ ({signed(game.strength)}).
+          Дополнительный бонус атаки и владение не заданы, поэтому не
+          добавляются. Тип урона и общие правила критического попадания пока не
+          определены. Попадание подтверждает игрок по решению мастера.
         </p>
       </details>
     </section>
@@ -249,7 +250,9 @@ function AttackResolution({
               >
                 <Dices size={19} />
                 Бросить урон
-                <span>1d{stances[pending.stance].damageDie} + 2</span>
+                <span>
+                  1d{stances[pending.stance].damageDie} {signed(game.strength)}
+                </span>
               </button>
             ))}
           {pending.damage && (

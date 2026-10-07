@@ -55,7 +55,7 @@ export const stances: Record<StanceId, StanceDefinition> = {
 };
 export const stanceOrder: StanceId[] = ["shield", "duelist", "assault"];
 export const isStanceId = (value: unknown): value is StanceId =>
-  typeof value === "string" && value in stances;
+  typeof value === "string" && Object.hasOwn(stances, value);
 export const warriorRules = {
   strengthModifier: 2,
   // TODO: rule not defined by game design. No implicit proficiency bonus is added.

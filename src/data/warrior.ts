@@ -1,6 +1,7 @@
 import type { CharacterDefinition } from "../domain/types";
 export const warrior: CharacterDefinition = {
   id: "warrior-level-1",
+  name: "Воин",
   className: "Воин",
   level: 1,
   archetype: "Мастер стоек",

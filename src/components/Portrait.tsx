@@ -1,10 +1,12 @@
 import { useRef, useState } from "react";
 import type { CharacterSession } from "../domain/types";
-import { Feather, Upload, X } from "./Icons";
+import { Upload, X } from "./Icons";
 export function Portrait({
   core,
   update,
+  smarchok = false,
 }: {
+  smarchok?: boolean;
   core: CharacterSession;
   update: (p: Partial<CharacterSession>) => void;
 }) {
@@ -34,6 +36,26 @@ export function Portrait({
       <div className={`portrait-frame ${core.portrait ? "has-image" : ""}`}>
         {core.portrait ? (
           <img src={core.portrait} alt={`Портрет: ${core.name}`} />
+        ) : smarchok ? (
+          <svg
+            className="reference-portrait"
+            viewBox="9 113 438 667"
+            preserveAspectRatio="xMidYMin slice"
+            role="img"
+            aria-label="Смарчок на Туше, оригинальный портрет"
+          >
+            <defs>
+              <clipPath id="portrait-region">
+                <rect x="9" y="113" width="438" height="667" />
+              </clipPath>
+            </defs>
+            <image
+              clipPath="url(#portrait-region)"
+              href={`${import.meta.env.BASE_URL}reference/smarchok.jpg`}
+              width="1024"
+              height="1536"
+            />
+          </svg>
         ) : (
           <div className="portrait-placeholder">
             <div className="crest-ring" />
@@ -103,7 +125,10 @@ export function Portrait({
           className="visually-hidden"
           tabIndex={-1}
           aria-label="Файл портрета"
-          onChange={(e) => upload(e.target.files?.[0])}
+          onChange={(e) => {
+            upload(e.target.files?.[0]);
+            e.target.value = "";
+          }}
         />
       </div>
       {error && (
@@ -113,32 +138,9 @@ export function Portrait({
       )}
       <div className="identity-detail">
         <span className="eyebrow">Архетип</span>
-        <h2>Мастер стоек</h2>
+        <h2>{smarchok ? "Грибной симбионт" : "Мастер стоек"}</h2>
         <div className="thin-rule" />
       </div>
-      <details className="notes panel">
-        <summary>
-          <Feather size={17} />
-          Заметки персонажа
-        </summary>
-        <label className="visually-hidden" htmlFor="notes">
-          Заметки персонажа
-        </label>
-        <textarea
-          id="notes"
-          value={core.notes}
-          maxLength={4000}
-          placeholder="Связи, цели, важное за столом…"
-          onChange={(e) => update({ notes: e.target.value })}
-        />
-      </details>
-      <details className="rules-note">
-        <summary>Навыки и владения</summary>
-        <p>
-          Для этого Воина список навыков и бонусы владения пока не заданы.
-          Броски характеристик используют только указанные модификаторы.
-        </p>
-      </details>
     </aside>
   );
 }

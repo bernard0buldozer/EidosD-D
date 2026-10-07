@@ -1,88 +1,77 @@
-import type { CharacterDefinition, CharacterSession } from "../domain/types";
-import { Coins, Footprints, Heart, Minus, Plus, Shield } from "./Icons";
+import type { CharacterSession } from "../domain/types";
+import { NumberField } from "./Overlay";
 export function Vitals({
-  character,
   core,
   defense,
   update,
+  smarchok = false,
+  resource,
 }: {
-  character: CharacterDefinition;
   core: CharacterSession;
-  defense: number;
+  defense: number | null;
   update: (p: Partial<CharacterSession>) => void;
+  smarchok?: boolean;
+  resource?: React.ReactNode;
 }) {
   return (
     <section className="vitals" aria-label="Показатели персонажа">
       <div className="vital defense">
-        <span className="eyebrow">
-          <Shield size={17} />
-          Защита
+        <span className="eyebrow">Защита{smarchok ? " · Туша" : ""}</span>
+        <strong data-testid="defense">{defense ?? "—"}</strong>
+        <span className="vital-note">
+          {core.defense !== null
+            ? "введена вручную"
+            : smarchok
+              ? "задайте в листе"
+              : "от активной стойки"}
         </span>
-        <strong data-testid="defense">{defense}</strong>
-        <span className="vital-note">от активной стойки</span>
       </div>
-      <div className={`vital health ${core.hp === 0 ? "empty" : ""}`}>
-        <span className="eyebrow">
-          <Heart size={17} />
-          Здоровье
-        </span>
+      <div className="vital health">
+        <span className="eyebrow">Здоровье{smarchok ? " · Туша" : ""}</span>
         <div className="hp-control">
           <button
             aria-label="Уменьшить здоровье"
-            onClick={() => update({ hp: core.hp - 1 })}
-            disabled={core.hp === 0}
+            disabled={core.hp === null || core.hp <= 0}
+            onClick={() => update({ hp: core.hp! - 1 })}
           >
-            <Minus size={19} />
+            −
           </button>
           <div>
-            <strong data-testid="hp">{core.hp}</strong>
-            <span> / {character.maxHp}</span>
+            <strong data-testid="hp">{core.hp ?? "—"}</strong>
+            <span> / {core.maxHp ?? "—"}</span>
           </div>
           <button
             aria-label="Увеличить здоровье"
-            onClick={() => update({ hp: core.hp + 1 })}
-            disabled={core.hp === character.maxHp}
+            disabled={
+              core.hp === null || core.maxHp === null || core.hp >= core.maxHp
+            }
+            onClick={() => update({ hp: core.hp! + 1 })}
           >
-            <Plus size={19} />
+            +
           </button>
         </div>
-        <div
-          className="health-meter"
-          role="progressbar"
-          aria-label="Здоровье"
-          aria-valuenow={core.hp}
-          aria-valuemin={0}
-          aria-valuemax={character.maxHp}
-        >
-          <span style={{ width: `${(core.hp / character.maxHp) * 100}%` }} />
-        </div>
-      </div>
-      <div className="vital">
-        <span className="eyebrow">
-          <Footprints size={17} />
-          Скорость
+        <span className="vital-note">
+          {smarchok ? "Сам Смарчок: всегда 1 HP" : "Текущее / максимум"}
         </span>
-        <strong>{character.speed.value}</strong>
-        <span className="vital-note">{character.speed.unit}</span>
       </div>
-      {character.resources.map((r) => (
-        <div className="vital" key={r.id}>
-          <span className="eyebrow">{r.name}</span>
-          <strong>{r.maximum ?? "—"}</strong>
-        </div>
-      ))}
+      <div className="vital speed">
+        <NumberField
+          label={smarchok ? "Скорость Туши" : "Скорость"}
+          value={core.speed}
+          onChange={(speed) => update({ speed })}
+        />
+        <span className="vital-note">клеток</span>
+      </div>
+      {resource}
       <div className="vital wallet">
         <label className="eyebrow" htmlFor="wallet">
-          <Coins size={17} />
           Кошелёк
         </label>
         <input
           id="wallet"
           value={core.wallet}
           onChange={(e) => update({ wallet: e.target.value })}
-          maxLength={100}
           placeholder="—"
-          aria-label="Кошелёк"
         />
         <span className="vital-note">свободная запись</span>
       </div>
