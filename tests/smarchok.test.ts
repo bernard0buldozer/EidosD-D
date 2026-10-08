@@ -188,8 +188,8 @@ describe("editable shared core and physical results", () => {
     expect(c.hp).toBe(45);
     expect(normalizeCore({ ...c, maxHp: 20 }).hp).toBe(20);
   });
-  it("round-trips all custom fields without an inferred attribute modifier", () => {
-    const c = defaultCore(warrior);
+  it("round-trips Smarchok custom fields without an inferred attribute modifier", () => {
+    const c = defaultCore(smarchok);
     c.maxHp = 50;
     c.hp = 45;
     c.defense = 22;
@@ -222,7 +222,7 @@ describe("editable shared core and physical results", () => {
         timestamp: 1,
       },
     ];
-    expect(decodeCore(JSON.parse(JSON.stringify(c)), warrior)).toEqual(c);
+    expect(decodeCore(JSON.parse(JSON.stringify(c)), smarchok)).toEqual(c);
   });
   it("sums mixed physical dice plus an explicit modifier", () => {
     const r = physicalResult(

@@ -15,7 +15,7 @@ export interface StanceDefinition {
 export const stances: Record<StanceId, StanceDefinition> = {
   shield: {
     id: "shield",
-    name: "Стойка щита",
+    name: "Щит",
     defense: 15,
     equipment: "Только щит",
     subtitle: "Прикрыть и удержать",
@@ -41,7 +41,7 @@ export const stances: Record<StanceId, StanceDefinition> = {
   },
   assault: {
     id: "assault",
-    name: "Штурм",
+    name: "Натиск",
     defense: 12,
     equipment: "Меч + щит",
     subtitle: "Победить и продолжить",

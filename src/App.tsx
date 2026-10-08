@@ -1,5 +1,4 @@
 import { useState, type ReactNode } from "react";
-import { warrior } from "./data/warrior";
 import { smarchok } from "./data/smarchok";
 import type {
   Attribute,
@@ -8,12 +7,6 @@ import type {
   DicePool,
   Roll,
 } from "./domain/types";
-import { useSheet } from "./state/useSheet";
-import { stances } from "./mechanics/warrior/config";
-import { ActionEconomy } from "./mechanics/warrior/ActionEconomy";
-import { Stances } from "./mechanics/warrior/Stances";
-import { AttackPanel } from "./mechanics/warrior/AttackPanel";
-import { Abilities } from "./mechanics/warrior/Abilities";
 import {
   Bodies,
   Mycelium,
@@ -32,12 +25,14 @@ import {
   Skills,
 } from "./components/Collections";
 import { DiceTray, RollHistory } from "./components/DiceTray";
-import { DiceProvider, useDice } from "./dice/DiceProvider";
+import { DiceProvider, SimpleDiceProvider, useDice } from "./dice/DiceProvider";
+import { TilzitSheet } from "./tilzit/TilzitSheet";
 import { Sigil, Swords } from "./components/Icons";
 import { signed } from "./domain/dice";
 type CommonGame = {
   state: { core: CharacterSession; history: Roll[]; lastRoll: Roll | null };
   storageOk: boolean;
+  recoveryWarning?: string;
   rolling: boolean;
   updateCore: (p: Partial<CharacterSession>) => void;
   reset: () => void;
@@ -49,17 +44,25 @@ type CommonGame = {
 function AppContent() {
   const [selected, setSelected] = useState(() => {
     try {
-      return localStorage.getItem("eidos:selected-character") === "warrior"
-        ? "warrior"
-        : "smarchok";
+      const requested = new URLSearchParams(window.location.search).get(
+        "character",
+      );
+      if (requested === "tilzit") return "warrior";
+      if (requested === "smarchok") return "smarchok";
+      return localStorage.getItem("eidos:selected-character") === "smarchok"
+        ? "smarchok"
+        : "warrior";
     } catch {
-      return "smarchok";
+      return "warrior";
     }
   });
   const dice = useDice();
   const switchCharacter = (id: string) => {
     setSelected(id);
     dice.clear();
+    const url = new URL(window.location.href);
+    url.searchParams.set("character", id === "warrior" ? "tilzit" : "smarchok");
+    window.history.replaceState(null, "", url);
     try {
       localStorage.setItem("eidos:selected-character", id);
     } catch {
@@ -75,7 +78,7 @@ function AppContent() {
         disabled={dice.rolling}
         onChange={(e) => switchCharacter(e.target.value)}
       >
-        <option value="warrior">Воин</option>
+        <option value="warrior">Тильзит · Воин</option>
         <option value="smarchok">Смарчок</option>
       </select>
     </label>
@@ -98,30 +101,13 @@ function AppContent() {
         <span className="header-path">Лист персонажа</span>
       </header>
       {selected === "warrior" ? (
-        <WarriorScreen key="warrior" />
+        <SimpleDiceProvider>
+          <TilzitSheet />
+        </SimpleDiceProvider>
       ) : (
         <SmarchokScreen key="smarchok" />
       )}
     </>
-  );
-}
-function WarriorScreen() {
-  const game = useSheet();
-  const m = game.state.mechanic;
-  return (
-    <SheetFrame
-      game={game}
-      character={warrior}
-      defense={game.state.core.defense ?? stances[m.stance].defense}
-      theme={`theme-${m.stance}`}
-    >
-      <fieldset className="mechanics-lock" disabled={game.rolling}>
-        <Stances state={m} send={game.send} />
-        <ActionEconomy state={m} send={game.send} />
-        <AttackPanel game={game} />
-        <Abilities key={`${m.phase}-${m.round}-${m.stance}`} game={game} />
-      </fieldset>
-    </SheetFrame>
   );
 }
 function SmarchokScreen() {
@@ -202,7 +188,8 @@ function SheetFrame({
     bodies: "Тела и нежить",
     help: "О листе",
   };
-  const rollSkill = async (name: string, bonus: number) => {
+  const rollSkill = async (name: string, bonus: number | null) => {
+    if (bonus === null) return;
     const r = await dice.roll({
       label: name,
       kind: "skill",
@@ -274,6 +261,11 @@ function SheetFrame({
             размер портрета.
           </p>
         )}
+        {game.recoveryWarning && (
+          <p className="error-text" role="alert">
+            {game.recoveryWarning}
+          </p>
+        )}
         <Vitals
           core={core}
           defense={defense}
@@ -304,11 +296,13 @@ function SheetFrame({
                   {displayedSkills.map((s) => (
                     <button
                       key={s.id}
-                      disabled={game.rolling || !s.name.trim()}
+                      disabled={
+                        game.rolling || !s.name.trim() || s.bonus === null
+                      }
                       onClick={() => rollSkill(s.name, s.bonus)}
                     >
                       <span>{s.name || "Без названия"}</span>
-                      <b>{signed(s.bonus)}</b>
+                      <b>{s.bonus === null ? "—" : signed(s.bonus)}</b>
                     </button>
                   ))}
                 </div>

@@ -9,7 +9,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "vitest run",
-    "test:browser": "node tests/browser.mjs",
+    "test:browser": "node tests/tilzit-browser.mjs && node tests/browser.mjs",
     "predev": "node scripts/dice-assets.mjs",
     "prebuild": "node scripts/dice-assets.mjs"
   },

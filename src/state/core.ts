@@ -1,10 +1,15 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useState, useRef } from "react";
 import type {
   CharacterDefinition,
   CharacterSession,
   Roll,
 } from "../domain/types";
 import { appendHistory } from "../domain/dice";
+import {
+  attributeModifier,
+  decodeTilzitDetails,
+  initialTilzitDetails,
+} from "../tilzit/model";
 export interface MechanicPlugin<M> {
   initial: () => M;
   decode: (value: unknown) => M;
@@ -32,6 +37,9 @@ export const defaultCore = (
   journal: [],
   skills: structuredClone(character.skills ?? []),
   proficiencies: "",
+  ...(character.calculatedModifiers
+    ? { derivedModifiers: true, tilzit: initialTilzitDetails() }
+    : {}),
 });
 const nullable = (v: unknown, min = 0) =>
   v === null
@@ -45,12 +53,18 @@ export function normalizeCore(core: CharacterSession): CharacterSession {
     ...core,
     maxHp,
     hp:
-      core.hp === null
+      core.hp === null || !Number.isFinite(core.hp)
         ? null
         : Math.max(0, Math.min(maxHp ?? Infinity, Math.trunc(core.hp))),
     level: nullable(core.level, 1),
     defense: nullable(core.defense),
     speed: nullable(core.speed),
+    attributes: core.derivedModifiers
+      ? core.attributes.map((a) => ({
+          ...a,
+          modifier: attributeModifier(a.score),
+        }))
+      : core.attributes,
   };
 }
 export function decodeCore(
@@ -90,7 +104,7 @@ export function decodeCore(
         v &&
         typeof v.id === "string" &&
         typeof v.name === "string" &&
-        Number.isFinite(v.bonus),
+        (v.bonus === null || Number.isFinite(v.bonus)),
     );
   if (Array.isArray(saved.items))
     core.items = saved.items.filter(
@@ -120,12 +134,14 @@ export function decodeCore(
         ].every((k) => typeof v[k] === "string") &&
         Number.isFinite(v.timestamp),
     );
+  if (character.calculatedModifiers)
+    core.tilzit = decodeTilzitDetails(saved.tilzit);
   return normalizeCore(core);
 }
 export const validRoll = (v: unknown): v is Roll => {
   if (!v || typeof v !== "object") return false;
   const r = v as Roll;
-  const sides = [4, 6, 8, 10, 12, 20];
+  const sides = [4, 6, 8, 10, 12, 20, 100];
   const basic =
     typeof r.id === "string" &&
     typeof r.label === "string" &&
@@ -142,7 +158,7 @@ export const validRoll = (v: unknown): v is Roll => {
     Array.isArray(r.values) &&
     r.values.length <= 30 &&
     r.values.every(
-      (n) => Number.isInteger(n) && n >= 1 && n <= (r.sides ?? 20),
+      (n) => Number.isInteger(n) && n >= 1 && n <= (r.sides ?? 100),
     ) &&
     Number.isFinite(r.timestamp) &&
     (r.total === null || Number.isFinite(r.total)) &&
@@ -218,6 +234,8 @@ export function useCharacter<M>(
   migrate?: () => CharacterState<M>,
 ) {
   const key = `eidos:sheet:${character.id}:v2`;
+  const recovery = useRef("");
+  const canSave = useRef(true);
   const initial = (): CharacterState<M> => ({
     core: defaultCore(character),
     mechanic: plugin.initial(),
@@ -229,7 +247,16 @@ export function useCharacter<M>(
       const raw = localStorage.getItem(key);
       if (!raw) return migrate?.() ?? initial();
       const parsed = JSON.parse(raw);
-      if (parsed.version !== 2 || !parsed.state) return initial();
+      if (
+        parsed?.version !== 2 ||
+        !parsed.state ||
+        typeof parsed.state !== "object"
+      ) {
+        canSave.current = false;
+        recovery.current =
+          "Неизвестный формат сохранения. Исходная запись сохранена; изменения в этой вкладке не записываются поверх неё.";
+        return initial();
+      }
       const s = parsed.state;
       return {
         core: decodeCore(s.core, character),
@@ -240,6 +267,16 @@ export function useCharacter<M>(
         lastRoll: validRoll(s.lastRoll) ? s.lastRoll : null,
       };
     } catch {
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          localStorage.setItem(`${key}:recovery`, raw);
+          recovery.current =
+            "Повреждённая запись сохранена отдельно для восстановления. Лист открыт с исходными значениями.";
+        }
+      } catch {
+        canSave.current = false;
+      }
       return initial();
     }
   };
@@ -247,7 +284,22 @@ export function useCharacter<M>(
   const [storageOk, setStorageOk] = useState(true);
   useEffect(() => {
     try {
-      localStorage.setItem(key, JSON.stringify({ version: 2, state }));
+      if (!canSave.current) {
+        setStorageOk(false);
+        return;
+      }
+      const stored = state.core.derivedModifiers
+        ? {
+            ...state,
+            core: {
+              ...state.core,
+              attributes: state.core.attributes.map(
+                ({ modifier: _modifier, ...attribute }) => attribute,
+              ),
+            },
+          }
+        : state;
+      localStorage.setItem(key, JSON.stringify({ version: 2, state: stored }));
       setStorageOk(true);
     } catch {
       setStorageOk(false);
@@ -256,13 +308,18 @@ export function useCharacter<M>(
   return {
     state,
     storageOk,
+    recoveryWarning: recovery.current,
     updateCore: (patch: Partial<CharacterSession>) =>
       dispatch({ type: "core", patch }),
     recordRoll: (roll: Roll) => dispatch({ type: "roll", roll }),
     setMechanic: (value: M, core?: Partial<CharacterSession>) =>
       dispatch({ type: "mechanic-state", value, core }),
     clearHistory: () => dispatch({ type: "clear-history" }),
-    reset: () => dispatch({ type: "reset", value: initial() }),
+    reset: () => {
+      canSave.current = true;
+      recovery.current = "";
+      dispatch({ type: "reset", value: initial() });
+    },
   };
 }
 export type CoreController<M = unknown> = ReturnType<typeof useCharacter<M>>;

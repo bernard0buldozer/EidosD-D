@@ -17,6 +17,7 @@ import {
 import { loadState, validMechanic, type SheetState } from "./persistence";
 import { normalizeCore, useCharacter } from "./core";
 import { useDice } from "../dice/DiceProvider";
+import { parseDamage } from "../tilzit/rolls";
 type SheetEvent =
   | { type: "core"; patch: Partial<CharacterSession> }
   | { type: "roll"; roll: Roll }
@@ -64,7 +65,10 @@ export function useSheet() {
   const send = (event: WarriorEvent) => {
     const next = warriorReducer(state.mechanic, event);
     if (next === state.mechanic) return;
-    core.setMechanic(next);
+    core.setMechanic(
+      next,
+      next.stance !== state.mechanic.stance ? { defense: null } : undefined,
+    );
     if ("roll" in event) core.recordRoll(event.roll);
   };
   const rollAttribute = async (a: Attribute) => {
@@ -97,7 +101,9 @@ export function useSheet() {
             : stance.attackName,
       kind: "attack",
       pool: [{ sides: 20, quantity: stance.disadvantage ? 2 : 1 }],
-      modifier: strength,
+      modifier:
+        state.core.tilzit?.weapons[stance.id === "shield" ? "shield" : "sword"]
+          .bonus ?? strength,
       disadvantage: stance.disadvantage,
       critical: origin === "counter" && !!state.mechanic.counter?.critical,
     });
@@ -108,11 +114,21 @@ export function useSheet() {
     if (!pending?.hit || pending.damage || pending.critical || dice.rolling)
       return;
     const stance = stances[pending.stance];
+    const override =
+      state.core.tilzit?.weapons[stance.id === "shield" ? "shield" : "sword"]
+        .damage;
+    const formula = override
+      ? parseDamage(override)
+      : {
+          pool: [{ sides: stance.damageDie, quantity: 1 }],
+          modifier: strength,
+        };
+    if (!formula) return;
     const r = await dice.roll({
       label: stance.id === "shield" ? "Урон щитом" : "Урон мечом",
       kind: "damage",
-      pool: [{ sides: stance.damageDie, quantity: 1 }],
-      modifier: strength,
+      pool: formula.pool,
+      modifier: formula.modifier,
     });
     if (r) send({ type: "damage", roll: r });
   };

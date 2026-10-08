@@ -8,6 +8,8 @@ import {
 import type DiceBox from "@3d-dice/dice-box";
 import type { DicePool, Roll, RollKind, DieSides } from "../domain/types";
 import { signed } from "../domain/dice";
+import { simpleRoll } from "../tilzit/rolls";
+import type { CheckMode } from "../domain/types";
 export interface RollRequest {
   label: string;
   kind: RollKind;
@@ -21,8 +23,37 @@ type DiceController = {
   rolling: boolean;
   error: string;
   clear: () => void;
+  mode?: CheckMode;
+  setMode?: (mode: CheckMode) => void;
 };
 const Context = createContext<DiceController | null>(null);
+export function SimpleDiceProvider({ children }: { children: ReactNode }) {
+  const [mode, setMode] = useState<CheckMode>("normal");
+  const [error, setError] = useState("");
+  const roll = async (request: RollRequest) => {
+    try {
+      setError("");
+      return simpleRoll(request, mode);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Не удалось выполнить бросок.");
+      return null;
+    }
+  };
+  return (
+    <Context.Provider
+      value={{
+        roll,
+        rolling: false,
+        error,
+        clear: () => setError(""),
+        mode,
+        setMode,
+      }}
+    >
+      {children}
+    </Context.Provider>
+  );
+}
 export function physicalResult(
   request: RollRequest,
   dice: { sides: DieSides; value: number }[],
@@ -78,7 +109,7 @@ export function DiceProvider({ children }: { children: ReactNode }) {
   const init = () => {
     if (!initializing.current)
       initializing.current = (async () => {
-        // Dice-Box has an RNG fallback. Reject it explicitly: all sheet rolls require WebGL physics.
+        // Preserve Smarchok's physical dice and explicitly reject Dice-Box's RNG fallback.
         const probe = document.createElement("canvas");
         const gl =
           window.WebGLRenderingContext &&

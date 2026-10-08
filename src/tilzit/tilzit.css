@@ -1,0 +1,1116 @@
+body:has(.tilzit-sheet) {
+  background:
+    radial-gradient(ellipse at 50% 0, #64544166, transparent 65%), #29251e;
+}
+.tilzit-sheet {
+  --ink: #342b1e;
+  --muted: #6b5b43;
+  --accent: #685028;
+  --gold: #96723c;
+  --line: #bda474;
+  --paper: #f0e3c7;
+  position: relative;
+  width: min(1240px, calc(100% - 48px));
+  margin: 28px auto 48px;
+  padding: 30px;
+  color: var(--ink);
+  background:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.68' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23714f24' opacity='.055' filter='url(%23n)' d='M0 0h240v240H0z'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 10% 10%, #fff9e5a0, transparent 60%),
+    radial-gradient(ellipse at 92% 75%, #b99b5230, transparent 58%), #eee0c2;
+  border: 1px solid #c7b088;
+  outline: 1px solid #bfa572;
+  outline-offset: -9px;
+  box-shadow:
+    0 25px 65px #0005,
+    inset 0 0 65px #8c65202e;
+  font-family: var(--serif);
+}
+.tilzit-sheet::before,
+.tilzit-sheet::after {
+  content: "✦";
+  position: absolute;
+  font-size: 26px;
+  color: #866536;
+  pointer-events: none;
+}
+.tilzit-sheet::before {
+  top: -4px;
+  left: -2px;
+}
+.tilzit-sheet::after {
+  bottom: -4px;
+  right: -2px;
+}
+.tilzit-sheet button,
+.tilzit-sheet input,
+.tilzit-sheet textarea,
+.tilzit-sheet select {
+  font-family: inherit;
+}
+.tilzit-sheet .eyebrow {
+  color: #6d5732;
+  letter-spacing: 0.13em;
+  font-size: 10px;
+}
+.tilzit-sheet-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 13px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  border-bottom: 1px solid var(--line);
+}
+.tilzit-sheet .save-status {
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 0;
+  color: #4d5837;
+}
+.tilzit-identity {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) 80px;
+  gap: 26px;
+  align-items: center;
+  padding: 22px 0 25px;
+}
+.tilzit-sheet label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  min-width: 0;
+}
+.tilzit-sheet input,
+.tilzit-sheet textarea,
+.tilzit-sheet select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  background: #fffaf02e;
+  color: var(--ink);
+  border: 1px solid #ad986d;
+  border-radius: 2px;
+  padding: 8px 10px;
+  line-height: 1.4;
+}
+.tilzit-sheet input.visually-hidden {
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0;
+  left: 0;
+}
+.tilzit-sheet textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+.tilzit-name-area {
+  display: grid;
+  gap: 10px;
+}
+.tilzit-name-area label {
+  color: #6c573a;
+  font-size: 11px;
+}
+.tilzit-name-area .tilzit-name {
+  font-size: clamp(21px, 2.2vw, 32px);
+  font-weight: 700;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  padding: 2px 0 8px;
+  letter-spacing: -0.02em;
+}
+.tilzit-name-area .tilzit-nickname {
+  font-size: 18px;
+  font-style: italic;
+  border: none;
+  background: none;
+  padding: 0;
+  color: #6d4d25;
+}
+.tilzit-identity-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 70px;
+  gap: 10px;
+}
+.tilzit-identity-fields > label:first-child {
+  grid-column: 1 / -1;
+}
+.tilzit-identity-fields input {
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  padding: 3px 0;
+}
+.tilzit-seal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  color: #896737;
+}
+.tilzit-seal span {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+.tilzit-summary {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  border: 3px double #a88b59;
+  outline: 1px solid #c1aa80;
+  outline-offset: 3px;
+  margin-bottom: 26px;
+  background: #fff9e42e;
+}
+.tilzit-summary > div,
+.tilzit-summary > label {
+  position: relative;
+  display: grid;
+  grid-template-columns: 25px 1fr;
+  grid-template-rows: 22px 48px 18px;
+  gap: 4px 7px;
+  padding: 14px 14px 10px;
+  border-right: 1px solid #af9769;
+  align-items: center;
+}
+.tilzit-summary > :last-child {
+  border-right: none;
+}
+.tilzit-summary svg {
+  width: 23px;
+  height: 23px;
+  color: #674e29;
+}
+.tilzit-summary span {
+  font-size: 16px;
+}
+.tilzit-summary strong {
+  grid-column: 1 / -1;
+  justify-self: center;
+  font-size: 31px;
+  font-weight: 600;
+  line-height: 1;
+}
+.tilzit-summary strong i {
+  font-size: 17px;
+  font-weight: 400;
+  font-style: normal;
+  color: #6c5c43;
+}
+.tilzit-summary small {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 10px;
+  color: #65563d;
+}
+.tilzit-summary .tilzit-wallet input {
+  grid-column: 1 / -1;
+  font-size: 15px;
+  text-align: center;
+  background: none;
+}
+.tilzit-layout-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 17px;
+  align-items: center;
+}
+.tilzit-layout-toolbar p {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #64533b;
+  max-width: 460px;
+}
+.tilzit-sheet .button {
+  min-height: 38px;
+  font-size: 13px;
+  padding: 9px 13px;
+  border-radius: 2px;
+  white-space: normal;
+}
+.tilzit-sheet .button.primary {
+  background: #6b542f;
+  color: #fff5db;
+  border-color: #6b542f;
+}
+.tilzit-sheet .button.primary:hover {
+  background: #57401f;
+}
+.tilzit-sheet .button.secondary {
+  color: #44341f;
+  border-color: #a58b59;
+  background: #f7ecd55c;
+}
+.tilzit-sheet .button.secondary:hover {
+  background: #e0cca487;
+}
+.tilzit-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: 16px;
+  gap: 12px;
+  position: relative;
+}
+.tilzit-grid.configuring {
+  background: linear-gradient(#a48d5015 1px, transparent 1px) 0 0 / 28px 28px;
+}
+.tilzit-portrait-tile {
+  grid-column: 1 / span 4;
+  grid-row: 1 / span 36;
+  min-width: 0;
+  border: 3px double #a48a59;
+  padding: 7px;
+  position: relative;
+}
+.tilzit-presentation {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.tilzit-portrait-art {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #b39865;
+  background:
+    radial-gradient(ellipse at 45% 35%, #fcf5e6a0, transparent 65%), #e6d6b866;
+}
+.tilzit-portrait-art::before {
+  position: absolute;
+  content: "";
+  inset: 10px;
+  border: 1px solid #ab8c4c88;
+  pointer-events: none;
+  z-index: 1;
+}
+.tilzit-portrait-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  display: block;
+}
+.tilzit-art-placeholder {
+  height: 100%;
+  padding: 28px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  text-align: center;
+  color: #81643e;
+}
+.tilzit-art-placeholder svg {
+  filter: drop-shadow(0 2px 0 #fff7e0);
+}
+.portrait-motto {
+  font-size: 28px;
+  color: #644b28;
+  font-style: italic;
+}
+.tilzit-art-placeholder p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #746144;
+}
+.tilzit-art-rule {
+  width: 100%;
+  font-size: 14px;
+  color: #a48a58;
+}
+.tilzit-portrait-caption {
+  padding: 22px 12px 14px;
+  text-align: center;
+}
+.tilzit-portrait-caption p {
+  margin: 8px 0 18px;
+  color: #68553a;
+  font-size: 15px;
+}
+.tilzit-portrait-caption .button {
+  display: inline-flex;
+}
+.tilzit-portrait-caption .text-button {
+  display: block;
+  margin: 12px auto 0;
+}
+.tilzit-tile {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border: 3px double #a38b5e;
+  background: #fff8e618;
+  box-shadow: inset 0 0 14px #8b713209;
+}
+.tilzit-tile::before,
+.tilzit-tile::after {
+  content: "◇";
+  position: absolute;
+  color: #7f6035;
+  font-size: 12px;
+  line-height: 12px;
+  pointer-events: none;
+}
+.tilzit-tile::before {
+  top: -8px;
+  left: calc(50% - 6px);
+}
+.tilzit-tile::after {
+  bottom: -8px;
+  left: calc(50% - 6px);
+}
+.tilzit-tile.drop-target {
+  outline: 3px solid #957333;
+  outline-offset: 1px;
+  background: #fff5d287;
+}
+.tilzit-block-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 14px;
+  border-bottom: 1px solid #ab935f;
+  min-height: 47px;
+}
+.tilzit-block-header h2 {
+  font-size: 21px;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+.tile-ornament {
+  font-size: 21px;
+  line-height: 1;
+  color: #795b30;
+}
+.tile-collapse {
+  border: none;
+  background: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 26px;
+  padding: 0;
+  color: #6e5531;
+}
+.collapsed .tile-collapse {
+  transform: rotate(-90deg);
+}
+.collapsed .tilzit-block-header {
+  border-bottom: 0;
+  min-height: 38px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+.tilzit-block-content {
+  padding: 15px;
+  overflow: auto;
+  scrollbar-color: #af986c #eadcc055;
+  scrollbar-width: thin;
+  min-height: 0;
+  flex: 1;
+}
+.tilzit-block-content[hidden] {
+  display: none;
+}
+.tile-move-handle {
+  color: #6a4f28;
+  background: #e5d2ac;
+  border: 1px solid #b29763;
+  padding: 0;
+  height: 28px;
+  width: 25px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  font-size: 22px;
+}
+.tile-move-handle:active {
+  cursor: grabbing;
+}
+.tile-resize-handle {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 24px;
+  height: 24px;
+  background: #e6d3ac;
+  border: 1px solid #a48b59;
+  color: #7a5c32;
+  cursor: nwse-resize;
+  touch-action: none;
+  user-select: none;
+}
+.configuring .tilzit-block-content {
+  padding-bottom: 28px;
+}
+.tilzit-sheet .tilzit-block-content .panel {
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+}
+.tilzit-sheet .section-heading {
+  display: none;
+}
+.tilzit-tile {
+  container-type: inline-size;
+}
+.tilzit-sheet .tilzit-block-content > .panel {
+  margin: 0;
+}
+.tilzit-sheet .number-field {
+  gap: 5px;
+}
+.tilzit-sheet .number-field input {
+  min-height: 34px;
+  padding: 5px 7px;
+  font-size: 17px;
+  text-align: center;
+}
+.tilzit-hint {
+  font-size: 12px;
+  color: #68583e;
+  line-height: 1.55;
+  margin: 10px 0;
+}
+.tilzit-sheet .error-text {
+  font-size: 12px;
+  margin: 9px 0;
+}
+.tilzit-attributes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 13px;
+}
+.tilzit-attribute {
+  border-bottom: 1px solid #b3996933;
+  padding-bottom: 9px;
+  display: grid;
+  grid-template-columns: 1fr 52px;
+  gap: 5px;
+  align-items: center;
+  min-width: 0;
+}
+.tilzit-attribute > button {
+  border: none;
+  background: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 26px;
+  text-align: left;
+  align-items: center;
+  gap: 8px 4px;
+  min-width: 0;
+}
+.tilzit-attribute > button span {
+  font-size: 14px;
+  grid-column: 1 / -1;
+}
+.tilzit-attribute > button strong {
+  font-size: 24px;
+  font-weight: 500;
+}
+.tilzit-attribute > button small {
+  color: #715931;
+  font-size: 9px;
+}
+.tilzit-attribute .number-field > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.tilzit-health-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.tilzit-hp-meter {
+  height: 7px;
+  border: 1px solid #9b8054;
+  margin: 15px 0;
+  background: #b49b711f;
+}
+.tilzit-hp-meter span {
+  display: block;
+  height: 100%;
+  background: #83763e;
+  transition: width 0.15s;
+}
+.tilzit-health-action {
+  display: grid;
+  grid-template-columns: 125px 1fr;
+  gap: 14px;
+  align-items: end;
+}
+.tilzit-health-change {
+  font-size: 15px;
+  font-style: italic;
+  color: #665132;
+  margin: 11px 0 2px;
+}
+.tilzit-sheet .stances {
+  margin-bottom: 15px;
+}
+.tilzit-sheet .stance-grid {
+  gap: 10px;
+}
+.tilzit-sheet .stance-card {
+  background: #fff7e82e;
+  border-color: #b29a6d;
+  box-shadow: none;
+  color: #594426;
+  padding: 12px;
+  min-height: 125px;
+}
+.tilzit-sheet .stance-card.active {
+  background: #faf1dc8c;
+  border-color: #84622e;
+  box-shadow:
+    inset 0 0 0 1px #a78548,
+    0 2px 6px #65502214;
+}
+.tilzit-sheet .stance-card.active strong,
+.tilzit-sheet .stance-card.active .stance-equipment,
+.tilzit-sheet .stance-card.active .stance-top > svg {
+  color: #57401e;
+}
+.tilzit-sheet .stance-card strong {
+  font-family: var(--serif);
+  font-size: 17px;
+}
+.tilzit-sheet .stance-defense {
+  background: #e6d5b6;
+  color: #564321;
+}
+.tilzit-sheet .stance-card .stance-footer {
+  color: #64502d;
+}
+.tilzit-sheet .stance-permission {
+  margin: 9px 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.tilzit-sheet .economy {
+  padding: 12px 0 0;
+  border-top: 1px solid #b49a66;
+  background: none;
+  gap: 10px;
+}
+.tilzit-sheet .action-slot {
+  padding: 8px;
+  border-color: #b39b6b;
+}
+.tilzit-sheet .action-slot strong {
+  font-size: 11px;
+}
+.tilzit-sheet .action-slots {
+  gap: 6px;
+}
+.tilzit-sheet .round-number strong {
+  font-size: 25px;
+}
+.tilzit-skills {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 7px;
+  margin: 12px 0;
+}
+.tilzit-skill {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 54px 30px 20px;
+  gap: 6px;
+  align-items: center;
+}
+.tilzit-skill > input {
+  padding: 6px 2px;
+  border: none;
+  border-bottom: 1px solid #b49b6955;
+  background: none;
+  font-size: 14px;
+}
+.tilzit-skill .number-field > span {
+  display: none;
+}
+.tile-roll-button {
+  width: 28px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #bca271;
+  background: #f6edd84a;
+  color: #69512e;
+  padding: 0;
+}
+.tilzit-sheet .attack-head {
+  font-size: 11px;
+}
+.tilzit-sheet .attack-table {
+  margin-top: 0;
+}
+.tilzit-sheet .attack-button {
+  padding: 8px 2px;
+}
+.tilzit-sheet .attack-button strong {
+  font-size: 14px;
+}
+.tilzit-sheet .attack-row {
+  padding: 10px 0;
+}
+.tilzit-sheet .attack-row > strong {
+  font-size: 17px;
+}
+.tilzit-sheet .attack-row [role="cell"] {
+  font-size: 13px;
+}
+.tilzit-sheet .ability-title {
+  margin-top: 0;
+}
+.tilzit-sheet .ability-description {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.tilzit-sheet .rules-note,
+.tilzit-sheet .ability-details {
+  margin-top: 12px;
+}
+.tilzit-sheet details summary {
+  line-height: 1.5;
+}
+.tilzit-weapon-settings,
+.tilzit-custom-attacks,
+.tilzit-custom-abilities {
+  border-top: 1px solid #b49b6966;
+  margin-top: 17px;
+  padding-top: 12px;
+}
+.tilzit-confirmed-abilities > summary {
+  margin-bottom: 16px;
+}
+.tilzit-editor-fields {
+  border: 1px solid #b49b69;
+  margin: 14px 0;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.tilzit-editor-fields legend {
+  padding: 0 6px;
+}
+.tilzit-custom-abilities details {
+  border: 1px solid #b49b69;
+  margin: 10px 0 17px;
+  padding: 12px;
+}
+.tilzit-custom-abilities label {
+  margin: 10px 0;
+}
+.tilzit-sheet .collection-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  padding-bottom: 14px;
+}
+.tilzit-sheet .collection-toolbar > input {
+  flex: 1 1 140px;
+}
+.tilzit-sheet .collection-layout {
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+.tilzit-sheet .collection-list {
+  display: flex;
+  flex-wrap: wrap;
+  max-height: 180px;
+  overflow: auto;
+  border: 0;
+  gap: 7px;
+}
+.tilzit-sheet .collection-list > button {
+  flex: 1 1 125px;
+  border: 1px solid #bda271;
+  background: #fff6e334;
+  padding: 9px;
+}
+.tilzit-sheet .entry-editor {
+  padding: 0;
+}
+.tilzit-equipment-preview {
+  margin-bottom: 12px;
+}
+.tilzit-equipment-preview details {
+  border-bottom: 1px solid #b39a6966;
+  padding: 8px 0;
+}
+.tilzit-equipment-preview p {
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: 7px;
+  white-space: pre-wrap;
+}
+.tilzit-roll-mode {
+  margin-bottom: 10px;
+}
+.tilzit-die-picker {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+  margin: 13px 0;
+}
+.tilzit-die-picker > button {
+  border: 1px solid #b69b65;
+  background: #fff6e038;
+  padding: 9px 0;
+  font-size: 14px;
+}
+.tilzit-die-picker > button.selected {
+  background: #6a522d;
+  color: #fff7e0;
+  border-color: #6a522d;
+}
+.tilzit-dice-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+  margin: 12px 0;
+}
+.tilzit-roll-result {
+  margin: 16px 0;
+  padding: 15px;
+  border: 1px solid #a98e57;
+  background: #fff8e545;
+  text-align: center;
+}
+.tilzit-roll-result > strong {
+  display: block;
+  font-size: 45px;
+  font-weight: 500;
+  margin: 8px 0;
+}
+.tilzit-roll-result p {
+  margin-bottom: 10px;
+  font-size: 17px;
+}
+.tilzit-roll-result small {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #68583c;
+}
+.tilzit-roll-history summary {
+  padding: 10px 0;
+}
+.tilzit-sheet .history-list li {
+  background: #fff5dc2e;
+  padding: 10px;
+  border-color: #b29a6a;
+}
+.tilzit-sheet .history-list strong {
+  font-size: 13px;
+}
+.tilzit-biography-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.tilzit-biography-facts > label:last-child {
+  grid-column: 1 / -1;
+}
+.tilzit-biography > label {
+  margin-top: 14px;
+}
+.tilzit-sheet .tilzit-notes {
+  min-height: 240px;
+  line-height: 1.8;
+  background: repeating-linear-gradient(
+    transparent,
+    transparent 29px,
+    #b298674d 29px,
+    #b298674d 30px
+  );
+  padding-top: 1px;
+  font-size: 16px;
+  border: none;
+}
+.tilzit-sheet [data-block="notes"] .button {
+  margin-top: 14px;
+}
+.tilzit-sheet-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #735d3b;
+  margin-top: 25px;
+  border-top: 1px solid #b69e71;
+  padding-top: 17px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.tilzit-sheet-footer > :last-child {
+  margin-left: auto;
+}
+@container (max-width: 450px) {
+  .tilzit-attributes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tilzit-health-action {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 1000px) {
+  .tilzit-sheet {
+    width: calc(100% - 28px);
+    padding: 24px;
+  }
+  .tilzit-identity {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 20px;
+  }
+  .tilzit-seal {
+    display: none;
+  }
+  .tilzit-summary > div,
+  .tilzit-summary > label {
+    padding: 11px 8px;
+    grid-template-columns: 20px 1fr;
+    gap: 4px;
+  }
+  .tilzit-summary span {
+    font-size: 14px;
+  }
+  .tilzit-summary strong {
+    font-size: 27px;
+  }
+  .tilzit-summary small {
+    font-size: 9px;
+  }
+  .tilzit-summary svg {
+    width: 19px;
+    height: 19px;
+  }
+  .tilzit-block-content {
+    padding: 12px;
+  }
+  .tilzit-block-header {
+    padding: 9px 11px;
+  }
+  .tilzit-block-header h2 {
+    font-size: 19px;
+  }
+  .tilzit-attributes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .tilzit-health-action {
+    grid-template-columns: 1fr;
+  }
+  .tilzit-attribute > button span {
+    font-size: 13px;
+  }
+  .tilzit-art-placeholder .portrait-motto {
+    font-size: 24px;
+  }
+  .tilzit-art-placeholder svg {
+    width: 80px;
+  }
+}
+@media (max-width: 760px) {
+  .tilzit-sheet {
+    width: calc(100% - 20px);
+    padding: 18px 14px;
+    margin-top: 14px;
+  }
+  .tilzit-sheet-topline {
+    letter-spacing: 0.08em;
+    font-size: 9px;
+    gap: 8px;
+  }
+  .tilzit-sheet .save-status {
+    font-size: 9px;
+  }
+  .tilzit-identity {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 19px 0;
+  }
+  .tilzit-name-area .tilzit-name {
+    font-size: 26px;
+  }
+  .tilzit-identity-fields {
+    grid-template-columns: 1fr 70px;
+  }
+  .tilzit-summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-bottom: 22px;
+  }
+  .tilzit-summary > div,
+  .tilzit-summary > label {
+    grid-template-rows: 22px 35px 17px;
+  }
+  .tilzit-summary > :nth-child(3) {
+    border-right: none;
+  }
+  .tilzit-summary > :nth-child(4),
+  .tilzit-summary > :nth-child(5) {
+    border-top: 1px solid #bba173;
+  }
+  .tilzit-summary > :nth-child(5) {
+    grid-column: span 2;
+  }
+  .tilzit-layout-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 11px;
+  }
+  .tilzit-layout-toolbar .button-row {
+    justify-content: flex-start;
+  }
+  .tilzit-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: auto;
+    gap: 15px;
+  }
+  .tilzit-portrait-tile {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    height: 370px;
+  }
+  .tilzit-presentation {
+    display: grid;
+    grid-template-columns: 1fr 115px;
+  }
+  .tilzit-portrait-caption {
+    align-self: center;
+    padding: 12px 8px;
+  }
+  .tilzit-portrait-caption .button {
+    padding: 9px;
+    font-size: 11px;
+  }
+  .tilzit-art-placeholder {
+    gap: 18px;
+    padding: 25px 14px;
+  }
+  .tilzit-art-placeholder .eyebrow {
+    font-size: 8px;
+  }
+  .tilzit-art-placeholder .portrait-motto {
+    font-size: 23px;
+  }
+  .tilzit-art-placeholder p {
+    font-size: 12px;
+  }
+  .tilzit-tile {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    height: var(--tile-height);
+  }
+  .tilzit-tile.collapsed {
+    height: 48px;
+  }
+  .tilzit-attributes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 9px;
+  }
+  .tilzit-attribute > button strong {
+    font-size: 21px;
+  }
+  .tilzit-attribute {
+    grid-template-columns: 1fr 44px;
+  }
+  .tilzit-health-fields {
+    gap: 9px;
+  }
+  .tilzit-health-fields .number-field > span {
+    font-size: 11px;
+  }
+  .tilzit-health-action .button-row {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  .tilzit-health-action .button {
+    flex: 1;
+    padding: 9px 8px;
+    font-size: 12px;
+  }
+  .tilzit-sheet .stance-grid {
+    gap: 6px;
+  }
+  .tilzit-sheet .stance-card {
+    padding: 10px 6px;
+    min-height: 124px;
+  }
+  .tilzit-sheet .stance-card strong {
+    font-size: 14px;
+  }
+  .tilzit-sheet .stance-card .stance-equipment {
+    font-size: 10px;
+  }
+  .tilzit-sheet .stance-card .stance-footer {
+    font-size: 10px;
+  }
+  .tilzit-sheet .economy {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .tilzit-sheet .action-slots {
+    display: grid;
+    min-width: 0;
+    flex: 1;
+    grid-template-columns: 1fr;
+  }
+  .tilzit-sheet .action-slot small {
+    margin: 0;
+  }
+  .tilzit-sheet .action-slot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 5px 7px;
+  }
+  .tilzit-sheet .round-controls {
+    width: 100%;
+  }
+  .tilzit-sheet .attack-head,
+  .tilzit-sheet .attack-row {
+    grid-template-columns: minmax(90px, 1.2fr) 0.6fr 1fr 0.8fr;
+    gap: 5px;
+  }
+  .tilzit-sheet .attack-button > svg {
+    display: none;
+  }
+  .tilzit-sheet .attack-row [role="cell"] {
+    font-size: 11px;
+    overflow-wrap: anywhere;
+  }
+  .tilzit-sheet .attack-button strong {
+    font-size: 13px;
+  }
+  .tilzit-sheet .damage-formula {
+    white-space: normal;
+  }
+  .tilzit-sheet-footer {
+    flex-wrap: wrap;
+    font-size: 10px;
+  }
+  .tilzit-sheet-footer > :last-child {
+    margin-left: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tilzit-sheet * {
+    transition: none !important;
+  }
+}

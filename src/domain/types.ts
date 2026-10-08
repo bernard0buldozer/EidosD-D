@@ -31,6 +31,42 @@ export interface CharacterDefinition {
   attributes: Attribute[];
   resources: ResourceDefinition[];
   mechanicId: string;
+  calculatedModifiers?: boolean;
+}
+export interface Biography {
+  nickname: string;
+  race: string;
+  className: string;
+  age: number | null;
+  height: number | null;
+  weight: number | null;
+  clan: string;
+  backstory: string;
+  goals: string;
+}
+export interface EditableAttack {
+  id: string;
+  name: string;
+  bonus: number | null;
+  damage: string;
+  damageType: string;
+}
+export interface EditableAbility {
+  id: string;
+  name: string;
+  description: string;
+  conditions: string;
+  current: number | null;
+  maximum: number | null;
+}
+export interface TilzitDetails {
+  biography: Biography;
+  weapons: Record<
+    "shield" | "sword",
+    { bonus: number | null; damage: string; damageType: string }
+  >;
+  attacks: EditableAttack[];
+  abilities: EditableAbility[];
 }
 export interface CharacterSession {
   hp: number | null;
@@ -47,6 +83,8 @@ export interface CharacterSession {
   journal: JournalEntry[];
   skills: Skill[];
   proficiencies: string;
+  derivedModifiers?: boolean;
+  tilzit?: TilzitDetails;
 }
 export interface InventoryItem {
   id: string;
@@ -70,9 +108,10 @@ export interface JournalEntry {
 export interface Skill {
   id: string;
   name: string;
-  bonus: number;
+  bonus: number | null;
 }
-export type DieSides = 4 | 6 | 8 | 10 | 12 | 20;
+export type DieSides = 4 | 6 | 8 | 10 | 12 | 20 | 100;
+export type CheckMode = "normal" | "advantage" | "disadvantage";
 export type RollKind =
   | "attribute"
   | "attack"
@@ -99,4 +138,5 @@ export interface Roll {
   pool?: DicePool[];
   dice?: { sides: DieSides; value: number }[];
   disadvantage?: boolean;
+  advantage?: boolean;
 }

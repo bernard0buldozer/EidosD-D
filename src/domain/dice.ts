@@ -1,6 +1,6 @@
 import type { DieSides, Roll, RollKind } from "./types";
 export type RandomDie = (sides: DieSides) => number;
-/** Legacy RNG helper for synthetic rule tests; live rolls use DiceProvider physics. */
+/** Unbiased browser randomness; Tilzit uses it without visual dice. */
 export const randomDie: RandomDie = (sides) => {
   const buffer = new Uint32Array(1);
   const ceiling = Math.floor(0x100000000 / sides) * sides;
@@ -59,7 +59,9 @@ export const signed = (value: number) =>
 export function rollSummary(roll: Roll): string {
   if (roll.kind === "manual") return `${roll.total} · по решению мастера`;
   const dice =
-    roll.disadvantage || (roll.kind === "attack" && roll.values.length === 2)
+    roll.disadvantage ||
+    roll.advantage ||
+    (roll.kind === "attack" && roll.values.length === 2)
       ? `[${roll.values.join(", ")}] → ${roll.values[roll.selectedIndex]}`
       : `${roll.values.join(" + ")}`;
   return roll.modifier === null

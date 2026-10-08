@@ -142,6 +142,7 @@ export function RollHistory({
               <small>
                 {r.dice?.map((d) => `d${d.sides}: ${d.value}`).join(" · ")}
                 {r.disadvantage ? " · помеха: выбрано меньшее" : ""}
+                {r.advantage ? " · преимущество: выбрано большее" : ""}
               </small>
             </li>
           ))}

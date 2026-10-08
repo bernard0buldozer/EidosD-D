@@ -58,12 +58,14 @@ async function pageIn(context) {
     if (r.status() >= 400) errors.push(`HTTP ${r.status()}: ${r.url()}`);
   });
   await p.goto(url);
+  await p.getByLabel("Персонаж", { exact: true }).selectOption("smarchok");
   return p;
 }
 async function actualRoll(p, click, id = "smarchok") {
   const previous = (await saved(p, id)).lastRoll?.id;
   await click();
-  await expect(p.locator(".physical-result")).toContainText("Бросаем");
+  if (id !== "warrior")
+    await expect(p.locator(".physical-result")).toContainText("Бросаем");
   await expect
     .poll(async () => (await saved(p, id)).lastRoll?.id, { timeout: 40000 })
     .not.toBe(previous);
@@ -78,11 +80,12 @@ async function actualRoll(p, click, id = "smarchok") {
     ? Math.min(...r.values)
     : r.values.reduce((a, b) => a + b, 0);
   assert.equal(r.total, r.modifier === null ? null : raw + r.modifier);
-  await expect(button(p, "Убрать кубики")).toBeEnabled();
+  if (id !== "warrior") await expect(button(p, "Убрать кубики")).toBeEnabled();
   return r;
 }
 async function hideDice(p) {
-  await button(p, "Убрать кубики").click();
+  if (await button(p, "Убрать кубики").count())
+    await button(p, "Убрать кубики").click();
   await expect(p.locator(".physical-result")).toHaveCount(0);
 }
 async function attackHit(p, { kill = false, push = false } = {}) {
@@ -406,32 +409,24 @@ try {
     "Портрет загружается, кадрируется, сохраняется и заменяется оригиналом",
   );
   await p.getByLabel("Персонаж", { exact: true }).selectOption("warrior");
-  await expect(p.locator("#character-name")).toHaveValue("Воин");
-  await button(p, "Редактировать лист").click();
-  await dialog(p, "Редактировать лист")
-    .getByLabel("Максимальное здоровье")
-    .fill("40");
-  await dialog(p, "Редактировать лист")
-    .getByLabel("Текущее здоровье")
-    .fill("35");
-  await dialog(p, "Редактировать лист")
-    .getByLabel("Сила: модификатор")
-    .fill("5");
-  await close(p, "Редактировать лист");
-  await button(p, "Увеличить здоровье").click();
-  await expect(p.getByTestId("hp")).toHaveText("36");
+  await expect(p.locator("#character-name")).toHaveValue("Тильзит Драгунатори");
+  await p.getByLabel("Максимальное HP", { exact: true }).fill("40");
+  await p.getByLabel("Текущее HP", { exact: true }).fill("35");
+  await p.getByLabel("Сила: значение", { exact: true }).fill("20");
+  await p.getByLabel("Величина изменения HP").fill("1");
+  await button(p, "Восстановить здоровье").click();
   await p.reload();
-  await expect(p.locator("#character-name")).toHaveValue("Воин");
-  await expect(p.getByTestId("hp")).toHaveText("36");
+  await expect(p.locator("#character-name")).toHaveValue("Тильзит Драгунатори");
+  assert.equal((await saved(p, "warrior")).core.hp, 36);
   check(
-    "Воин сохранён: максимальное HP и текущая Сила редактируются; выбранный персонаж восстанавливается",
+    "Тильзит сохраняет максимальное HP, вычисляет модификатор Силы и восстанавливает выбор персонажа",
   );
   await selectStance(p, "Дуэлянт");
-  await expect(p.getByTestId("defense")).toHaveText("10");
-  await selectStance(p, "Штурм");
-  await expect(p.getByTestId("defense")).toHaveText("12");
-  await selectStance(p, "Стойка щита");
-  await expect(p.getByTestId("defense")).toHaveText("15");
+  await expect(p.getByTestId("tilzit-defense")).toHaveText("10");
+  await selectStance(p, "Натиск");
+  await expect(p.getByTestId("tilzit-defense")).toHaveText("12");
+  await selectStance(p, "Щит");
+  await expect(p.getByTestId("tilzit-defense")).toHaveText("15");
   const shield = await actualRoll(
     p,
     () => button(p, "Бросить: Атака щитом").click(),
@@ -447,7 +442,7 @@ try {
   await selectStance(p, "Дуэлянт");
   assert.equal((await saved(p, "warrior")).mechanic.spent.bonus, false);
   check(
-    "Стойки, физическая помеха, текущий модификатор атаки и урона, сохранение действий и бесплатная смена после толчка",
+    "Тильзит: стойки, простая помеха, текущий модификатор, сохранение действий и бесплатная смена после толчка",
   );
   await button(p, "Использовать парирование").click();
   await p.getByLabel("Натуральный d20 вручную").fill("20");
@@ -459,7 +454,7 @@ try {
   await p.getByLabel("Критический урон вручную").fill("12");
   await button(p, "Записать урон").click();
   await button(p, "Завершить атаку").click();
-  await selectStance(p, "Штурм");
+  await selectStance(p, "Натиск");
   await button(p, "Новый раунд").click();
   await actualRoll(
     p,
@@ -482,7 +477,7 @@ try {
   );
   await button(p, "Выйти из боя").click();
   await button(p, "Завершить бой").click();
-  await selectStance(p, "Стойка щита");
+  await selectStance(p, "Щит");
   await button(p, "Использовать прикрытие").click();
   await button(p, "Прикрытие успешно").click();
   await selectStance(p, "Дуэлянт");
@@ -500,7 +495,9 @@ try {
   assert.equal(parry.total, null);
   await hideDice(p);
   await button(p, "Не удалось").click();
-  check("Физический d20 парирования не добавляет неизвестный модификатор");
+  check(
+    "Простой d20 парирования Тильзита не добавляет неизвестный модификатор",
+  );
   await p.getByLabel("Персонаж", { exact: true }).selectOption("smarchok");
   await expect(p.locator("#character-name")).toHaveValue("Смарчок тест");
   assert.equal((await saved(p)).mechanic.bodies.length, 3);
@@ -597,6 +594,7 @@ try {
   let persistent = await chromium.launchPersistentContext(profile, launch);
   let pp = await persistent.newPage();
   await pp.goto(url);
+  await pp.getByLabel("Персонаж", { exact: true }).selectOption("smarchok");
   await pp.locator("#character-name").fill("Повторное открытие");
   await pp.getByLabel("Максимальный Мицелий").fill("20");
   await pp.getByLabel("Текущий Мицелий").fill("9");

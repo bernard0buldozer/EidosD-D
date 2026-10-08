@@ -1,7 +1,7 @@
 import type { CharacterDefinition } from "../domain/types";
 export const warrior: CharacterDefinition = {
   id: "warrior-level-1",
-  name: "Воин",
+  name: "Тильзит Драгунатори",
   className: "Воин",
   level: 1,
   archetype: "Мастер стоек",
@@ -9,6 +9,27 @@ export const warrior: CharacterDefinition = {
   speed: { value: 6, unit: "клеток" },
   resources: [],
   mechanicId: "warrior-stances",
+  calculatedModifiers: true,
+  skills: [
+    "Атлетика",
+    "Акробатика",
+    "Внимательность",
+    "Выживание",
+    "Запугивание",
+    "История",
+    "Ловкость рук",
+    "Магия",
+    "Медицина",
+    "Обман",
+    "Природа",
+    "Проницательность",
+    "Убеждение",
+    "Религия",
+    "Скрытность",
+    "Уход за животными",
+    "Фокусировка",
+    "Починка",
+  ].map((name, index) => ({ id: `tilzit-skill-${index}`, name, bonus: null })),
   attributes: [
     {
       id: "strength",

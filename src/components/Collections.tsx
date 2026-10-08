@@ -315,7 +315,7 @@ export function Skills({ core, update }: Props) {
               label={`Бонус: ${s.name || "новый навык"}`}
               value={s.bonus}
               min={-1000}
-              onChange={(v) => patch(s.id, { bonus: v ?? 0 })}
+              onChange={(v) => patch(s.id, { bonus: v })}
             />
             <button
               className="icon-button"
@@ -335,7 +335,7 @@ export function Skills({ core, update }: Props) {
           update({
             skills: [
               ...core.skills,
-              { id: crypto.randomUUID(), name: "", bonus: 0 },
+              { id: crypto.randomUUID(), name: "", bonus: null },
             ],
           })
         }

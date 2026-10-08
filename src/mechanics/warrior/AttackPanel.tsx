@@ -13,9 +13,14 @@ import { rollSummary, signed } from "../../domain/dice";
 import type { SheetController } from "../../state/useSheet";
 import { stances } from "./config";
 import { canAttack, type PendingAttack } from "./rules";
+import { parseDamage } from "../../tilzit/rolls";
 export function AttackPanel({ game }: { game: SheetController }) {
   const state = game.state.mechanic;
   const stance = stances[state.stance];
+  const weapon =
+    game.state.core.tilzit?.weapons[
+      stance.id === "shield" ? "shield" : "sword"
+    ];
   const available = canAttack(state, "main") && !game.rolling;
   return (
     <section className="attacks panel" id="attacks">
@@ -54,14 +59,16 @@ export function AttackPanel({ game }: { game: SheetController }) {
             </button>
           </div>
           <strong role="cell">
-            {signed(game.strength)}
-            <span className="cell-note">СИЛ</span>
+            {signed(weapon?.bonus ?? game.strength)}
+            <span className="cell-note">
+              {weapon?.bonus == null ? "СИЛ" : "Вручную"}
+            </span>
           </strong>
           <span role="cell" className="damage-formula">
-            1d{stance.damageDie} {signed(game.strength)}
+            {weapon?.damage || `1d${stance.damageDie} ${signed(game.strength)}`}
           </span>
           <span role="cell" title="Тип урона не задан">
-            —
+            {weapon?.damageType || "Не задан"}
           </span>
         </div>
         {stance.id === "shield" && (
@@ -148,8 +155,11 @@ export function AttackPanel({ game }: { game: SheetController }) {
       <details className="rules-note">
         <summary>Как считается атака</summary>
         <p>
-          d20 + текущий модификатор СИЛ ({signed(game.strength)}).
-          Дополнительный бонус атаки и владение не заданы, поэтому не
+          d20 +{" "}
+          {weapon?.bonus == null
+            ? `текущий модификатор СИЛ (${signed(game.strength)})`
+            : `введённый бонус (${signed(weapon.bonus)})`}
+          . Дополнительный бонус атаки и владение не заданы, поэтому не
           добавляются. Тип урона и общие правила критического попадания пока не
           определены. Попадание подтверждает игрок по решению мастера.
         </p>
@@ -173,6 +183,11 @@ function AttackResolution({
     Number.isInteger(manualValue) &&
     manualValue >= 0 &&
     manualValue <= 100000;
+  const damageFormula =
+    game.state.core.tilzit?.weapons[
+      pending.stance === "shield" ? "shield" : "sword"
+    ].damage ||
+    `1d${stances[pending.stance].damageDie} ${signed(game.strength)}`;
   return (
     <div className="attack-resolution" aria-label="Разрешение атаки">
       <div className="resolution-title">
@@ -245,14 +260,12 @@ function AttackResolution({
             ) : (
               <button
                 className="button primary damage-roll"
-                disabled={game.rolling}
+                disabled={game.rolling || !parseDamage(damageFormula)}
                 onClick={game.damage}
               >
                 <Dices size={19} />
                 Бросить урон
-                <span>
-                  1d{stances[pending.stance].damageDie} {signed(game.strength)}
-                </span>
+                <span>{damageFormula}</span>
               </button>
             ))}
           {pending.damage && (
